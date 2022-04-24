@@ -27,7 +27,7 @@ app.get("/api/books", (req, res) => {
 
 //GET book
 app.get("/api/books/:id", (req, res) => {
-  var id = String(req.params.id);
+  var id = Number(req.params.id);
 
   collection.findOne({ bookID: id }, (error, result) => {
     if (error) {
@@ -63,7 +63,7 @@ app.put("/api/books/:id", (req, res) => {
 
 //DELETE book
 app.delete("/api/books/:id", (req, res) => {
-  var id = String(req.params.id);
+  var id = Number(req.params.id);
 
   var myquery = { bookID: id };
   collection.deleteOne(myquery, function (error, result) {
