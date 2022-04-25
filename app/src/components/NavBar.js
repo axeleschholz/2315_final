@@ -9,7 +9,7 @@ export default class NavBar extends React.Component {
       <div>
         <ul>
           <li className="mainLogo">
-            <Link to="/about">Booker</Link>
+            <Link to="/">Booker</Link>
           </li>
           <li className="right">
             <Link to="/books">All Books</Link>

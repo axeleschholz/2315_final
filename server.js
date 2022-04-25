@@ -17,12 +17,23 @@ var database, collection;
 
 //GET books
 app.get("/api/books", (req, res) => {
-  collection.find({}).toArray((error, result) => {
-    if (error) {
-      return res.status(500).send(error);
-    }
-    res.send(result);
-  });
+  var filter = "$natural";
+  if (req.query.filter) {
+    filter = req.query.filter;
+  }
+  var order = 1;
+  if (req.query.order) {
+    order = req.query.order;
+  }
+  collection
+    .find({})
+    .sort({ [filter]: order })
+    .toArray((error, result) => {
+      if (error) {
+        return res.status(500).send(error);
+      }
+      res.send(result);
+    });
 });
 
 //GET book
@@ -39,9 +50,9 @@ app.get("/api/books/:id", (req, res) => {
 
 function getNextSequence(sequenceName) {
   //References and updates a counter document to keep track of available IDs
-  return collection
+  return increment
     .findOneAndUpdate(
-      { _id: ObjectId(sequenceName) },
+      { name: sequenceName },
       { $inc: { sequence_value: 1 } },
       { returnNewDocument: true }
     )
@@ -56,7 +67,7 @@ function getNextSequence(sequenceName) {
 //POST book
 app.post("/api/books", async (req, res) => {
   //retrieve the next available book and add that to the post body
-  req.body["bookID"] = await getNextSequence("6266cd8acc59f62ed55b035b");
+  req.body["bookID"] = await getNextSequence("bookID");
 
   collection.insert(req.body, (error, result) => {
     if (error) {
@@ -105,6 +116,7 @@ app.listen(5000, () => {
       }
       database = client.db(DATABASE_NAME);
       collection = database.collection("books");
+      increment = database.collection("other");
       console.log("Connected to `" + DATABASE_NAME + "`!");
       console.log(
         "Listening on localhost:5000, try http://localhost:5000/api/books"

@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
 function withParams(Component) {
   return (props) => <Component {...props} params={useParams()} />;
@@ -9,6 +9,7 @@ function withParams(Component) {
 class ViewBook extends React.Component {
   state = {
     editing: false,
+    deleted: false,
     book: {
       bookID: "",
       title: "",
@@ -22,15 +23,19 @@ class ViewBook extends React.Component {
   };
 
   deleteBook() {
-    let book = this.state.book;
-    axios
-      .delete("http://localhost:5000/api/books/" + book["bookID"])
-      .then((response) => {
-        const books = this.state.books.filter(
-          (item) => item._id !== book["_id"]
-        );
-        this.setState({ books });
-      });
+    const book = this.state.book;
+
+    axios.delete("http://localhost:5000/api/books/" + book["bookID"]).then(
+      (response) => {
+        var deleted = true;
+        alert("Book deleted.");
+        this.setState({ deleted });
+      },
+      (error) => {
+        console.error(error);
+        alert("Error deleting book.");
+      }
+    );
   }
 
   getBook(book_id) {
@@ -142,7 +147,7 @@ class ViewBook extends React.Component {
             <p>
               Pages:{" "}
               <input
-                type="text"
+                type="number"
                 name="num_pages"
                 value={book.num_pages}
                 onChange={(event) => this.handleEditChange(event)}
@@ -151,7 +156,7 @@ class ViewBook extends React.Component {
             <p>
               Average Rating:{" "}
               <input
-                type="text"
+                type="number"
                 name="average_rating"
                 value={book.average_rating}
                 onChange={(event) => this.handleEditChange(event)}
@@ -160,7 +165,7 @@ class ViewBook extends React.Component {
             <p>
               Number of Ratings:{" "}
               <input
-                type="text"
+                type="number"
                 name="ratings_count"
                 value={book.ratings_count}
                 onChange={(event) => this.handleEditChange(event)}
@@ -184,6 +189,7 @@ class ViewBook extends React.Component {
             <button onClick={() => this.edit()}>EDIT</button>
           </div>
         )}
+        {this.state.deleted && <Navigate to="/books" replace={true} />}
       </div>
     );
   }

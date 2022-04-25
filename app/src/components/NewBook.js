@@ -1,6 +1,5 @@
 import React from "react";
 import axios from "axios";
-import { Navigate } from "react-router-dom";
 
 const initialState = {
   book: {
@@ -119,7 +118,7 @@ export default class NewBook extends React.Component {
         <p>
           Pages:{" "}
           <input
-            type="text"
+            type="number"
             name="num_pages"
             value={book.num_pages}
             onChange={(event) => this.handleChange(event)}
@@ -128,7 +127,7 @@ export default class NewBook extends React.Component {
         <p>
           Average Rating:{" "}
           <input
-            type="text"
+            type="number"
             name="average_rating"
             value={book.average_rating}
             onChange={(event) => this.handleChange(event)}
@@ -137,7 +136,7 @@ export default class NewBook extends React.Component {
         <p>
           Number of Ratings:{" "}
           <input
-            type="text"
+            type="number"
             name="ratings_count"
             value={book.ratings_count}
             onChange={(event) => this.handleChange(event)}
