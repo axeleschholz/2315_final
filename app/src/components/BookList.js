@@ -7,6 +7,7 @@ export default class BookList extends React.Component {
     books: [],
     book: {
       bookID: "",
+      title: "",
       authors: "",
       average_rating: "",
       ratings_count: "",
@@ -15,20 +16,6 @@ export default class BookList extends React.Component {
       isbn: "",
     },
   };
-
-  deleteBook(book) {
-    //<button onClick={() => this.deleteBook(book)}>DELETE</button>
-    console.log("delete book");
-
-    axios
-      .delete("http://localhost:5000/api/books/" + book["bookID"])
-      .then((response) => {
-        const books = this.state.books.filter(
-          (item) => item._id !== book["_id"]
-        );
-        this.setState({ books });
-      });
-  }
 
   getBooks() {
     axios.get("http://localhost:5000/api/books").then((res) => {
@@ -61,7 +48,9 @@ export default class BookList extends React.Component {
                 <td>{book.average_rating}</td>
                 <td>{book.ratings_count}</td>
                 <td>
-                  <Link to={"/books/" + book.bookID}>View</Link>
+                  <Link to={"/books/" + book.bookID}>
+                    <button>View</button>
+                  </Link>
                 </td>
               </tr>
             ))}

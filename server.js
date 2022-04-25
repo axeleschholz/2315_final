@@ -4,7 +4,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 
 const MongoClient = require("mongodb").MongoClient;
-const ObjectId = require("mongodb").ObjectID;
+const ObjectId = require("mongodb").ObjectId;
 const CONNECTION_URL =
   "mongodb://ubmm8wsjyz30hhcsinm2:XSNioWk3sKa2K9f0TVUR@ble9ddg2vn3ijr8-mongodb.services.clever-cloud.com:27017/ble9ddg2vn3ijr8";
 const DATABASE_NAME = "ble9ddg2vn3ijr8";
@@ -37,8 +37,27 @@ app.get("/api/books/:id", (req, res) => {
   });
 });
 
+function getNextSequence(sequenceName) {
+  //References and updates a counter document to keep track of available IDs
+  return collection
+    .findOneAndUpdate(
+      { _id: ObjectId(sequenceName) },
+      { $inc: { sequence_value: 1 } },
+      { returnNewDocument: true }
+    )
+    .then((updatedDocument) => {
+      return updatedDocument.value.sequence_value;
+    })
+    .catch((err) =>
+      console.error(`Failed to find and update document: ${err}`)
+    );
+}
+
 //POST book
-app.post("/api/books", (req, res) => {
+app.post("/api/books", async (req, res) => {
+  //retrieve the next available book and add that to the post body
+  req.body["bookID"] = await getNextSequence("6266cd8acc59f62ed55b035b");
+
   collection.insert(req.body, (error, result) => {
     if (error) {
       return res.status(500).send(error);
@@ -49,15 +68,16 @@ app.post("/api/books", (req, res) => {
 
 //PUT book
 app.put("/api/books/:id", (req, res) => {
-  var id = String(req.params.id);
-
+  var id = Number(req.params.id);
+  delete req.body._id;
   var myquery = { bookID: id };
   var newvalues = { $set: req.body };
+
   collection.updateOne(myquery, newvalues, function (error, result) {
     if (error) {
       return res.status(500).send(error);
     }
-    res.send(result.result);
+    res.send(result);
   });
 });
 
@@ -74,6 +94,7 @@ app.delete("/api/books/:id", (req, res) => {
   });
 });
 
+//Initialized
 app.listen(5000, () => {
   MongoClient.connect(
     CONNECTION_URL,

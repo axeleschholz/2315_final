@@ -8,13 +8,13 @@ export default class NavBar extends React.Component {
     return (
       <div>
         <ul>
-          <li class="mainLogo">
+          <li className="mainLogo">
             <Link to="/about">Booker</Link>
           </li>
-          <li class="right">
+          <li className="right">
             <Link to="/books">All Books</Link>
           </li>
-          <li class="right">
+          <li className="right">
             <Link to="/books/new">New Book</Link>
           </li>
         </ul>
