@@ -4,7 +4,8 @@
 
 First clone the repo:
 `git clone https://github.com/axeleschholz/2315_final.git`
-`cd 2413_final`
+
+`cd 2513_final`
 
 Then start the API:
 `node server.js`
